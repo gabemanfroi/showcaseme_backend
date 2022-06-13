@@ -1,9 +1,14 @@
 package services
 
-import "showcaseme/domain/models"
+import (
+	"showcaseme/domain/DTO/user"
+	"showcaseme/domain/models"
+)
 
-type UserService interface {
-	SaveUser(user *models.User)
-	GetUsers() ([]models.User, error)
-	GetUser(uint64) (*models.User, error)
+type UserServiceInterface interface {
+	Create(dto *user.CreateUserDTO) models.User
+	GetAll() ([]models.User, error)
+	GetById(id string) (models.User, error)
+	Delete(id string) error
+	Update(id string, dto *user.UpdateUserDTO) (models.User, error)
 }

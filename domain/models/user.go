@@ -1,14 +1,17 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
-	Email     string
-	FirstName string
-	LastName  string
-	Country   string
-	City      string
-	Pronouns  string
 	Age       int
+	City      string
+	Country   string
+	Email     string `gorm:"not null"`
+	FirstName string `gorm:"not null"`
+	LastName  string `gorm:"not null"`
+	Pronouns  string
+	Active    bool `gorm:"default:true"`
 }

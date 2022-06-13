@@ -1,22 +1,36 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"log"
+	"showcaseme/application"
 	"showcaseme/infra/IoC"
+	"showcaseme/infra/core"
+	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 func init() {
 
-	log.Printf("loading settings fron the environment")
+	log.Printf("Setting Up Your Server...")
 
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("error while trying to read .env")
-	}
+	utils.Check(godotenv.Load(), "Error while trying to read .env file...")
+
+	core.LoadConfig()
 	IoC.InitContainer()
-	log.Printf("settings loaded")
+	db.Migrate()
+	log.Printf("Server Setup complete...")
 }
 
 func main() {
+
+	app := fiber.New()
+
+	application.RegisterRoutes(app)
+
+	log.Println(fmt.Sprintf("Starting Server on port %s", core.AppConfig.AppPort))
+	log.Fatal(app.Listen(fmt.Sprintf(":%v", core.AppConfig.AppPort)))
 
 }

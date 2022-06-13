@@ -2,36 +2,44 @@ package IoC
 
 import (
 	"github.com/golobby/container/v3"
-	"github.com/joho/godotenv"
 	"gorm.io/gorm"
-	"log"
-	"os"
+	controllersImpl "showcaseme/application/controllers"
+	"showcaseme/domain/interfaces/controllers"
+	"showcaseme/domain/interfaces/repositories"
 	"showcaseme/domain/interfaces/services"
-	services2 "showcaseme/domain/services"
+	servicesImpl "showcaseme/domain/services"
 	"showcaseme/infra/db"
+	repositoriesImpl "showcaseme/infra/db/repositories"
+	"showcaseme/internal/utils"
 )
 
-type Container struct {
-	userService *services.UserService `container:"name"`
+type Constructors struct {
+	controllersImpl.UserController
 }
 
 func InitContainer() {
+	bindCore()
+	bindRepositories()
+	bindServices()
+	bindControllers()
+}
 
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("error while trying to read .env")
-	}
+func bindCore() {
+	err := container.Singleton(func() *gorm.DB { return db.CreateSqlInstance() })
+	utils.Check(err, "error while creating container bindings [database]")
+}
 
-	dbHost := os.Getenv("DB_HOST")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbPort := os.Getenv("DB_PORT")
-	dbUser := os.Getenv("DB_USER")
+func bindRepositories() {
+	err := container.Transient(func() repositories.UserRepositoryInterface { return repositoriesImpl.CreateUserRepository() })
+	utils.Check(err, "error while creating container bindings [repositories]")
+}
 
-	err := container.Transient(func() services.UserService { return services2.NewUserService() })
-	err = container.Singleton(func() *gorm.DB {
-		return db.CreateDB(dbUser, dbPassword, dbPort, dbHost, dbName)
-	})
-	if err != nil {
-		log.Fatal("error while creating the container " + err.Error())
-	}
+func bindServices() {
+	err := container.Transient(func() services.UserServiceInterface { return servicesImpl.CreateUserService() })
+	utils.Check(err, "error while creating container bindings [services]")
+}
+
+func bindControllers() {
+	err := container.Transient(func() controllers.UserControllerInterface { return controllersImpl.CreateUserController() })
+	utils.Check(err, "error while creating container bindings [controllers]")
 }
