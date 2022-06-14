@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type Skill struct {
 	gorm.Model
-	Name        string `binding:required`
-	Proficiency int    `binding:required`
-	UserId      int    `binding:required`
+	Name        string `gorm:"not null"`
+	Proficiency uint8  `gorm:"not null"`
+	UserId      uint8  `gorm:"not null"`
 	User        User
+	Active      bool
 }

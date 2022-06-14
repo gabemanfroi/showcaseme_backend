@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserControllerInterface interface {
+type IUserController interface {
 	Create(c *fiber.Ctx) error
 	GetAll(c *fiber.Ctx) error
 	GetById(c *fiber.Ctx) error

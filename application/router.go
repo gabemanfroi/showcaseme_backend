@@ -7,4 +7,5 @@ import (
 
 func RegisterRoutes(router fiber.Router) {
 	routes.RegisterUserRoutes(router)
+	routes.RegisterSkillRoutes(router)
 }

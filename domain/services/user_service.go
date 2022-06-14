@@ -9,10 +9,10 @@ import (
 )
 
 type UserService struct {
-	repository repositories.UserRepositoryInterface
+	repository repositories.IUserRepository
 }
 
-func CreateUserService() *UserService { return &UserService{repository: getRepository()} }
+func CreateUserService() *UserService { return &UserService{repository: getUserRepository()} }
 
 func (u UserService) Create(dto *user.CreateUserDTO) models.User {
 	return u.repository.Create(dto)
@@ -34,8 +34,8 @@ func (u UserService) Update(userId string, dto *user.UpdateUserDTO) (models.User
 	return u.repository.Update(userId, dto)
 }
 
-func getRepository() repositories.UserRepositoryInterface {
-	var injector repositories.UserRepositoryInterface
+func getUserRepository() repositories.IUserRepository {
+	var injector repositories.IUserRepository
 	utils.Check(container.Resolve(&injector), "Error while retrieving UserRepository instance")
 	return injector
 }

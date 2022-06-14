@@ -43,6 +43,7 @@ func Migrate() {
 		log.Fatal("error while retrieving database instance" + err.Error())
 	}
 
-	db.AutoMigrate(&models.User{})
+	utils.Check(db.AutoMigrate(&models.User{}), "failed to migrate users")
+	utils.Check(db.AutoMigrate(&models.Skill{}), "failed to migrate skills")
 	log.Printf("Database Migrations Completed...")
 }

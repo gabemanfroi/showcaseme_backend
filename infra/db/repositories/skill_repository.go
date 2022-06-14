@@ -17,48 +17,48 @@ func CreateSkillRepository() *SkillRepository {
 }
 
 func (repository SkillRepository) Create(dto *skill.CreateSkillDTO) models.Skill {
-	skillToBeCreated := models.Skill{
+	s := models.Skill{
 		UserId:      dto.UserId,
 		Name:        dto.Name,
 		Proficiency: dto.Proficiency,
 	}
-	repository.sqlClient.Create(&skillToBeCreated)
+	repository.sqlClient.Create(&s)
 
-	return skillToBeCreated
+	return s
 }
 
 func (repository SkillRepository) GetAll() ([]models.Skill, error) {
-	var retrievedSkills []models.Skill
-	repository.sqlClient.Find(&retrievedSkills)
-	return retrievedSkills, nil
+	var s []models.Skill
+	repository.sqlClient.Find(&s)
+	return s, nil
 }
 
 func (repository SkillRepository) GetById(id string) (models.Skill, error) {
-	var retrievedSkill models.Skill
-	repository.sqlClient.Find(&retrievedSkill, id)
-	return retrievedSkill, nil
+	var s models.Skill
+	repository.sqlClient.Find(&s, id)
+	return s, nil
 }
 
 func (repository SkillRepository) Delete(id string) error {
-	var skillToDelete models.Skill
-	repository.sqlClient.Find(&skillToDelete, id)
-	if skillToDelete.ID == 0 {
+	var s models.Skill
+	repository.sqlClient.Find(&s, id)
+	if s.ID == 0 {
 		return errors.New("skill not found")
 	}
-	skillToDelete.Active = false
-	repository.sqlClient.Save(&skillToDelete)
+	s.Active = false
+	repository.sqlClient.Save(&s)
 	return nil
 }
 
 func (repository SkillRepository) Update(id string, dto *skill.UpdateSkillDTO) (models.Skill, error) {
-	var skillToBeUpdated models.Skill
-	repository.sqlClient.Find(&skillToBeUpdated, id)
-	if skillToBeUpdated.ID == 0 {
-		return skillToBeUpdated, errors.New("skill not found")
+	var s models.Skill
+	repository.sqlClient.Find(&s, id)
+	if s.ID == 0 {
+		return s, errors.New("skill not found")
 	}
-	updateSkillValuesFromDTO(&skillToBeUpdated, dto)
-	repository.sqlClient.Save(&skillToBeUpdated)
-	return skillToBeUpdated, nil
+	updateSkillValuesFromDTO(&s, dto)
+	repository.sqlClient.Save(&s)
+	return s, nil
 }
 
 func updateSkillValuesFromDTO(model *models.Skill, dto *skill.UpdateSkillDTO) {

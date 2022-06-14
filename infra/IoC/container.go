@@ -30,16 +30,22 @@ func bindCore() {
 }
 
 func bindRepositories() {
-	err := container.Transient(func() repositories.UserRepositoryInterface { return repositoriesImpl.CreateUserRepository() })
-	utils.Check(err, "error while creating container bindings [repositories]")
+	utils.Check(container.Transient(func() repositories.IUserRepository { return repositoriesImpl.CreateUserRepository() }),
+		"error while creating container bindings [Repositories - User]")
+	utils.Check(container.Transient(func() repositories.ISkillRepository { return repositoriesImpl.CreateSkillRepository() }),
+		"error while creating container bindings [Repositories - Skill]")
 }
 
 func bindServices() {
-	err := container.Transient(func() services.UserServiceInterface { return servicesImpl.CreateUserService() })
-	utils.Check(err, "error while creating container bindings [services]")
+	utils.Check(container.Transient(func() services.IUserService { return servicesImpl.CreateUserService() }),
+		"error while creating container bindings [Services - User]")
+	utils.Check(container.Transient(func() services.ISkillService { return servicesImpl.CreateSkillService() }),
+		"error while creating container bindings [Services - Skill]")
 }
 
 func bindControllers() {
-	err := container.Transient(func() controllers.UserControllerInterface { return controllersImpl.CreateUserController() })
-	utils.Check(err, "error while creating container bindings [controllers]")
+	utils.Check(container.Transient(func() controllers.IUserController { return controllersImpl.CreateUserController() }),
+		"error while creating container bindings [Controllers - User]")
+	utils.Check(container.Transient(func() controllers.ISkillController { return controllersImpl.CreateSkillController() }),
+		"error while creating container bindings [Controllers - User]")
 }

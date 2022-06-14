@@ -16,8 +16,8 @@ func CreateUserRepository() *UserRepository {
 	return &UserRepository{sqlClient: db.GetSqlInstance()}
 }
 
-func (u UserRepository) Create(dto *user.CreateUserDTO) models.User {
-	user := models.User{
+func (repository UserRepository) Create(dto *user.CreateUserDTO) models.User {
+	u := models.User{
 		Age:       dto.Age,
 		City:      dto.City,
 		Country:   dto.Country,
@@ -27,47 +27,45 @@ func (u UserRepository) Create(dto *user.CreateUserDTO) models.User {
 		Pronouns:  dto.Pronouns,
 		Active:    true,
 	}
-
-	u.sqlClient.Create(&user)
-
-	return user
+	repository.sqlClient.Create(&u)
+	return u
 }
 
-func (u UserRepository) GetAll() ([]models.User, error) {
+func (repository UserRepository) GetAll() ([]models.User, error) {
 	var users []models.User
-	u.sqlClient.Find(&users)
+	repository.sqlClient.Find(&users)
 	return users, nil
 }
 
-func (u UserRepository) GetById(id string) (models.User, error) {
-	var user models.User
-	u.sqlClient.Find(&user, id)
-	return user, nil
+func (repository UserRepository) GetById(id string) (models.User, error) {
+	var u models.User
+	repository.sqlClient.Find(&u, id)
+	return u, nil
 }
 
-func (u UserRepository) Delete(id string) error {
-	var user models.User
-	u.sqlClient.Find(&user, id)
-	if user.ID == 0 {
+func (repository UserRepository) Delete(id string) error {
+	var u models.User
+	repository.sqlClient.Find(&u, id)
+	if u.ID == 0 {
 		return errors.New("user not found")
 	}
-	user.Active = false
-	u.sqlClient.Save(&user)
+	u.Active = false
+	repository.sqlClient.Save(&u)
 	return nil
 }
 
-func (u UserRepository) Update(id string, dto *user.UpdateUserDTO) (models.User, error) {
-	var user models.User
-	u.sqlClient.Find(&user, id)
-	if user.ID == 0 {
-		return user, errors.New("user not found")
+func (repository UserRepository) Update(id string, dto *user.UpdateUserDTO) (models.User, error) {
+	var u models.User
+	repository.sqlClient.Find(&u, id)
+	if u.ID == 0 {
+		return u, errors.New("user not found")
 	}
-	updateValuesFromDto(&user, dto)
-	u.sqlClient.Save(&user)
-	return user, nil
+	updateUserValuesFromDTO(&u, dto)
+	repository.sqlClient.Save(&u)
+	return u, nil
 }
 
-func updateValuesFromDto(model *models.User, dto *user.UpdateUserDTO) {
+func updateUserValuesFromDTO(model *models.User, dto *user.UpdateUserDTO) {
 	if dto.Age != nil {
 		model.Age = *dto.Age
 	}

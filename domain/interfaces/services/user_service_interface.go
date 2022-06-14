@@ -5,7 +5,7 @@ import (
 	"showcaseme/domain/models"
 )
 
-type UserServiceInterface interface {
+type IUserService interface {
 	Create(dto *user.CreateUserDTO) models.User
 	GetAll() ([]models.User, error)
 	GetById(id string) (models.User, error)
