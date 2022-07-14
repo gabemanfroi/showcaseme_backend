@@ -16,7 +16,7 @@ func CreateUserRepository() *UserRepository {
 	return &UserRepository{sqlClient: db.GetSqlInstance()}
 }
 
-func (repository UserRepository) Create(dto *user.CreateUserDTO) models.User {
+func (repository UserRepository) Create(dto *user.CreateUserDTO) *models.User {
 	u := models.User{
 		Age:       dto.Age,
 		City:      dto.City,
@@ -28,22 +28,25 @@ func (repository UserRepository) Create(dto *user.CreateUserDTO) models.User {
 		Active:    true,
 	}
 	repository.sqlClient.Create(&u)
-	return u
+	return &u
 }
 
-func (repository UserRepository) GetAll() ([]models.User, error) {
-	var users []models.User
+func (repository UserRepository) GetAll() ([]*models.User, error) {
+	var users []*models.User
 	repository.sqlClient.Find(&users)
 	return users, nil
 }
 
-func (repository UserRepository) GetById(id string) (models.User, error) {
+func (repository UserRepository) GetById(id uint) (*models.User, error) {
 	var u models.User
 	repository.sqlClient.Find(&u, id)
-	return u, nil
+	if u.ID == 0 {
+		return &u, errors.New("user not found")
+	}
+	return &u, nil
 }
 
-func (repository UserRepository) Delete(id string) error {
+func (repository UserRepository) Delete(id uint) error {
 	var u models.User
 	repository.sqlClient.Find(&u, id)
 	if u.ID == 0 {
@@ -54,15 +57,15 @@ func (repository UserRepository) Delete(id string) error {
 	return nil
 }
 
-func (repository UserRepository) Update(id string, dto *user.UpdateUserDTO) (models.User, error) {
+func (repository UserRepository) Update(id uint, dto *user.UpdateUserDTO) (*models.User, error) {
 	var u models.User
 	repository.sqlClient.Find(&u, id)
 	if u.ID == 0 {
-		return u, errors.New("user not found")
+		return &u, errors.New("user not found")
 	}
 	updateUserValuesFromDTO(&u, dto)
 	repository.sqlClient.Save(&u)
-	return u, nil
+	return &u, nil
 }
 
 func updateUserValuesFromDTO(model *models.User, dto *user.UpdateUserDTO) {

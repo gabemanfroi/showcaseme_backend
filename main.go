@@ -1,36 +1,11 @@
+/*
+Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import (
-	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
-	"log"
-	"showcaseme/application"
-	"showcaseme/infra/IoC"
-	"showcaseme/infra/core"
-	"showcaseme/infra/db"
-	"showcaseme/internal/utils"
-)
-
-func init() {
-
-	log.Printf("Setting Up Your Server...")
-
-	utils.Check(godotenv.Load(), "Error while trying to read .env file...")
-
-	core.LoadConfig()
-	IoC.InitContainer()
-	db.Migrate()
-	log.Printf("Server Setup complete...")
-}
+import "showcaseme/cmd"
 
 func main() {
-
-	app := fiber.New()
-
-	application.RegisterRoutes(app)
-
-	log.Println(fmt.Sprintf("Starting Server on port %s", core.AppConfig.AppPort))
-	log.Fatal(app.Listen(fmt.Sprintf(":%v", core.AppConfig.AppPort)))
-
+	cmd.Execute()
 }

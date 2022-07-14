@@ -6,9 +6,9 @@ import (
 )
 
 type IUserService interface {
-	Create(dto *user.CreateUserDTO) models.User
-	GetAll() ([]models.User, error)
-	GetById(id string) (models.User, error)
-	Delete(id string) error
-	Update(id string, dto *user.UpdateUserDTO) (models.User, error)
+	Create(dto *user.CreateUserDTO) *models.User
+	GetAll() ([]*models.User, error)
+	GetById(id uint) (*models.User, error)
+	Delete(id uint) error
+	Update(id uint, dto *user.UpdateUserDTO) (*models.User, error)
 }

@@ -13,10 +13,6 @@ import (
 	"showcaseme/internal/utils"
 )
 
-type Constructors struct {
-	controllersImpl.UserController
-}
-
 func InitContainer() {
 	bindCore()
 	bindRepositories()

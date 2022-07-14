@@ -12,23 +12,23 @@ type SkillService struct {
 	repository repositories.ISkillRepository
 }
 
-func (service SkillService) Create(dto *skill.CreateSkillDTO) models.Skill {
+func (service SkillService) Create(dto *skill.CreateSkillDTO) *models.Skill {
 	return service.repository.Create(dto)
 }
 
-func (service SkillService) GetAll() ([]models.Skill, error) {
+func (service SkillService) GetAll() ([]*models.Skill, error) {
 	return service.repository.GetAll()
 }
 
-func (service SkillService) GetById(id string) (models.Skill, error) {
+func (service SkillService) GetById(id uint) (*models.Skill, error) {
 	return service.repository.GetById(id)
 }
 
-func (service SkillService) Delete(id string) error {
+func (service SkillService) Delete(id uint) error {
 	return service.repository.Delete(id)
 }
 
-func (service SkillService) Update(id string, dto *skill.UpdateSkillDTO) (models.Skill, error) {
+func (service SkillService) Update(id uint, dto *skill.UpdateSkillDTO) (*models.Skill, error) {
 	return service.repository.Update(id, dto)
 }
 
