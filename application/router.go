@@ -6,6 +6,9 @@ import (
 )
 
 func RegisterRoutes(router fiber.Router) {
+	routes.RegisterCarouselItemCategoryRoutes(router)
 	routes.RegisterUserRoutes(router)
+	routes.RegisterSkillCategoryCategoryRoutes(router)
 	routes.RegisterSkillRoutes(router)
+	routes.RegisterResumeRoutes(router)
 }

@@ -15,7 +15,6 @@ type User struct {
 	FirstName string `gorm:"not null"`
 	LastName  string `gorm:"not null"`
 	Pronouns  string
-	Active    bool   `gorm:"default:true"`
 	Password  string `gorm:"not null"`
 }
 

@@ -44,6 +44,8 @@ func Migrate() {
 	}
 
 	utils.Check(db.AutoMigrate(&models.User{}), "failed to migrate users")
+	utils.Check(db.AutoMigrate(&models.CarouselItem{}), "failed to migrate carousel_item")
+	utils.Check(db.AutoMigrate(&models.SkillCategory{}), "failed to migrate skill_categories")
 	utils.Check(db.AutoMigrate(&models.Skill{}), "failed to migrate skills")
 	log.Printf("Database Migrations Completed...")
 }

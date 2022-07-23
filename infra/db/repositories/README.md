@@ -23,7 +23,6 @@ func (repository UserRepository) Create(dto *user.CreateUserDTO) models.User {
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
 		Pronouns:  dto.Pronouns,
-		Active:    true,
 	}
 	repository.sqlClient.Create(&u)
 	return u
@@ -47,8 +46,8 @@ func (repository UserRepository) Delete(id uint) error {
 	if u.ID == 0 {
 		return errors.New("user not found")
 	}
-	u.Active = false
-	repository.sqlClient.Save(&u)
+	
+	repository.sqlClient.Delete(&u)
 	return nil
 }
 

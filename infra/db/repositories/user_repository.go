@@ -16,8 +16,18 @@ func CreateUserRepository() *UserRepository {
 	return &UserRepository{sqlClient: db.GetSqlInstance()}
 }
 
-func (repository UserRepository) Create(dto *user.CreateUserDTO) *models.User {
-	u := models.User{
+func (repository UserRepository) Create(dto *user.CreateUserDTO) (*user.ReadUserDTO, error) {
+	var u models.User
+	repository.sqlClient.Where(&models.User{Email: dto.Email}).First(&u)
+	if u.ID != 0 {
+		return nil, errors.New("email is already taken")
+	}
+	repository.sqlClient.Where(&models.User{Username: dto.Username}).First(&u)
+	if u.ID != 0 {
+		return nil, errors.New("username is already taken")
+	}
+
+	u = models.User{
 		Age:       dto.Age,
 		City:      dto.City,
 		Country:   dto.Country,
@@ -25,47 +35,86 @@ func (repository UserRepository) Create(dto *user.CreateUserDTO) *models.User {
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
 		Pronouns:  dto.Pronouns,
-		Active:    true,
+		Password:  dto.Password,
+		Username:  dto.Username,
+		Role:      dto.Role,
 	}
 	repository.sqlClient.Create(&u)
-	return &u
+
+	return &user.ReadUserDTO{ID: u.ID, Username: u.Username, Email: u.Email, FirstName: u.FirstName, LastName: u.LastName}, nil
 }
 
-func (repository UserRepository) GetAll() ([]*models.User, error) {
+func (repository UserRepository) GetAll() ([]*user.ReadUserDTO, error) {
 	var users []*models.User
+	var userDTOs []*user.ReadUserDTO
+
 	repository.sqlClient.Find(&users)
-	return users, nil
+
+	for _, u := range users {
+		userDTOs = append(userDTOs, &user.ReadUserDTO{
+			ID:        u.ID,
+			Username:  u.Username,
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Email:     u.Email,
+			Role:      u.Role,
+		})
+	}
+
+	return userDTOs, nil
 }
 
-func (repository UserRepository) GetById(id uint) (*models.User, error) {
+func (repository UserRepository) GetById(id uint) (*user.ReadUserDTO, error) {
 	var u models.User
+
 	repository.sqlClient.Find(&u, id)
+
 	if u.ID == 0 {
-		return &u, errors.New("user not found")
+		return nil, errors.New("user not found")
 	}
-	return &u, nil
+	return &user.ReadUserDTO{
+		ID:        u.ID,
+		Username:  u.Username,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Role:      u.Role,
+	}, nil
 }
 
 func (repository UserRepository) Delete(id uint) error {
 	var u models.User
+
 	repository.sqlClient.Find(&u, id)
+
 	if u.ID == 0 {
 		return errors.New("user not found")
 	}
-	u.Active = false
-	repository.sqlClient.Save(&u)
+
+	repository.sqlClient.Where(&models.Skill{UserId: u.ID}).Delete(&models.Skill{})
+	repository.sqlClient.Where(&models.SkillCategory{UserId: u.ID}).Delete(&models.SkillCategory{})
+	repository.sqlClient.Delete(&u)
+
 	return nil
 }
 
-func (repository UserRepository) Update(id uint, dto *user.UpdateUserDTO) (*models.User, error) {
+func (repository UserRepository) Update(id uint, dto *user.UpdateUserDTO) (*user.ReadUserDTO, error) {
 	var u models.User
+
 	repository.sqlClient.Find(&u, id)
 	if u.ID == 0 {
-		return &u, errors.New("user not found")
+		return nil, errors.New("user not found")
 	}
 	updateUserValuesFromDTO(&u, dto)
 	repository.sqlClient.Save(&u)
-	return &u, nil
+
+	return &user.ReadUserDTO{
+		ID:        u.ID,
+		Email:     u.Email,
+		FirstName: u.FirstName,
+		Username:  u.Username,
+		LastName:  u.LastName,
+	}, nil
 }
 
 func updateUserValuesFromDTO(model *models.User, dto *user.UpdateUserDTO) {
@@ -89,5 +138,8 @@ func updateUserValuesFromDTO(model *models.User, dto *user.UpdateUserDTO) {
 	}
 	if dto.Pronouns != nil {
 		model.Pronouns = *dto.Pronouns
+	}
+	if dto.Role != nil {
+		model.Role = *dto.Role
 	}
 }

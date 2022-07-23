@@ -9,10 +9,11 @@ type User struct {
 	Age       int
 	City      string
 	Country   string
-	Email     string `gorm:"not null"`
+	Email     string `gorm:"not null,unique"`
 	FirstName string `gorm:"not null"`
 	LastName  string `gorm:"not null"`
+	Username  string `gorm:"not null"`
 	Pronouns  string
-	Active    bool   `gorm:"default:true"`
 	Password  string `gorm:"not null"`
+	Role      string
 }

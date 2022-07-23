@@ -12,7 +12,7 @@ import (
 func RegisterSkillRoutes(router fiber.Router) {
 	var controller controllers.ISkillController
 
-	utils.Check(container.Resolve(&controller), "Failed to create skillController instance...")
+	utils.Check(container.Resolve(&controller), "Failed to create skillController instance")
 
 	router.Post("/skills", func(c *fiber.Ctx) error {
 		return schema_validation_middleware.ValidateSchema(c, skill.CreateSkillValidator{})
