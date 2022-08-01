@@ -36,6 +36,18 @@ func bindRepositories() {
 		"error while creating container bindings [Repositories - Resume]")
 	utils.Check(container.Transient(func() repositories.ICarouselItemRepository { return repositoriesImpl.CreateCarouselItemRepository() }),
 		"error while creating container bindings [Repositories - CarouselItem]")
+	utils.Check(container.Transient(func() repositories.IUserWebsiteRepository { return repositoriesImpl.CreateUserWebsiteRepository() }),
+		"error while creating container bindings [Repositories - UserWebsite]")
+	utils.Check(container.Transient(func() repositories.IArticleRepository { return repositoriesImpl.CreateArticleRepository() }),
+		"error while creating container bindings [Repositories - Article]")
+	utils.Check(container.Transient(func() repositories.IProjectCategoryRepository {
+		return repositoriesImpl.CreateProjectCategoryRepository()
+	}),
+		"error while creating container bindings [Repositories - ProjectCategory]")
+	utils.Check(container.Transient(func() repositories.IProjectRepository {
+		return repositoriesImpl.CreateProjectRepository()
+	}),
+		"error while creating container bindings [Repositories - Project]")
 }
 
 func bindServices() {
@@ -49,6 +61,14 @@ func bindServices() {
 		"error while creating container bindings [Services - Resume]")
 	utils.Check(container.Transient(func() services.ICarouselItemService { return servicesImpl.CreateCarouselItemService() }),
 		"error while creating container bindings [Services - CarouselItem]")
+	utils.Check(container.Transient(func() services.IUserWebsiteService { return servicesImpl.CreateUserWebsiteService() }),
+		"error while creating container bindings [Services - UserWebsite]")
+	utils.Check(container.Transient(func() services.IArticleService { return servicesImpl.CreateArticleService() }),
+		"error while creating container bindings [Services - Article]")
+	utils.Check(container.Transient(func() services.IProjectCategoryService { return servicesImpl.CreateProjectCategoryService() }),
+		"error while creating container bindings [Services - ProjectCategory]")
+	utils.Check(container.Transient(func() services.IProjectService { return servicesImpl.CreateProjectService() }),
+		"error while creating container bindings [Services - Project]")
 }
 
 func bindControllers() {
@@ -62,4 +82,16 @@ func bindControllers() {
 		"error while creating container bindings [Controllers - Resume]")
 	utils.Check(container.Transient(func() controllers.ICarouselItemController { return controllersImpl.CreateCarouselItemController() }),
 		"error while creating container bindings [Controllers - CarouselItem]")
+	utils.Check(container.Transient(func() controllers.IUserWebsiteController { return controllersImpl.CreateUserWebsiteController() }),
+		"error while creating container bindings [Controllers - UserWebsite]")
+	utils.Check(container.Transient(func() controllers.IArticleController { return controllersImpl.CreateArticleController() }),
+		"error while creating container bindings [Controllers - Article]")
+	utils.Check(container.Transient(func() controllers.IProjectCategoryController {
+		return controllersImpl.CreateProjectCategoryController()
+	}),
+		"error while creating container bindings [Controllers - ProjectCategory]")
+	utils.Check(container.Transient(func() controllers.IProjectController {
+		return controllersImpl.CreateProjectController()
+	}),
+		"error while creating container bindings [Controllers - Project]")
 }

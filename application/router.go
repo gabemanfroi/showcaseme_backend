@@ -11,4 +11,8 @@ func RegisterRoutes(router fiber.Router) {
 	routes.RegisterSkillCategoryCategoryRoutes(router)
 	routes.RegisterSkillRoutes(router)
 	routes.RegisterResumeRoutes(router)
+	routes.RegisterUserWebsiteRoutes(router)
+	routes.RegisterArticleRoutes(router)
+	routes.RegisterProjectCategoryRoutes(router)
+	routes.RegisterProjectRoutes(router)
 }

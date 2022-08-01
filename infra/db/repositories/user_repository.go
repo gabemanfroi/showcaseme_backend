@@ -93,6 +93,11 @@ func (repository UserRepository) Delete(id uint) error {
 
 	repository.sqlClient.Where(&models.Skill{UserId: u.ID}).Delete(&models.Skill{})
 	repository.sqlClient.Where(&models.SkillCategory{UserId: u.ID}).Delete(&models.SkillCategory{})
+	repository.sqlClient.Where(&models.CarouselItem{UserId: u.ID}).Delete(&models.CarouselItem{})
+	repository.sqlClient.Where(&models.UserWebsite{UserId: u.ID}).Delete(&models.UserWebsite{})
+	repository.sqlClient.Where(&models.Article{UserId: u.ID}).Delete(&models.Article{})
+	repository.sqlClient.Where(&models.ProjectCategory{UserId: u.ID}).Delete(&models.ProjectCategory{})
+	repository.sqlClient.Where(&models.Project{UserId: u.ID}).Delete(&models.Project{})
 	repository.sqlClient.Delete(&u)
 
 	return nil
