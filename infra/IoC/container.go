@@ -42,12 +42,13 @@ func bindRepositories() {
 		"error while creating container bindings [Repositories - Article]")
 	utils.Check(container.Transient(func() repositories.IProjectCategoryRepository {
 		return repositoriesImpl.CreateProjectCategoryRepository()
-	}),
-		"error while creating container bindings [Repositories - ProjectCategory]")
+	}), "error while creating container bindings [Repositories - ProjectCategory]")
 	utils.Check(container.Transient(func() repositories.IProjectRepository {
 		return repositoriesImpl.CreateProjectRepository()
-	}),
-		"error while creating container bindings [Repositories - Project]")
+	}), "error while creating container bindings [Repositories - Project]")
+	utils.Check(container.Transient(func() repositories.IWorkExperienceRepository {
+		return repositoriesImpl.CreateWorkExperienceRepository()
+	}), "error while creating container bindings [Repositories - Project]")
 }
 
 func bindServices() {
@@ -68,6 +69,8 @@ func bindServices() {
 	utils.Check(container.Transient(func() services.IProjectCategoryService { return servicesImpl.CreateProjectCategoryService() }),
 		"error while creating container bindings [Services - ProjectCategory]")
 	utils.Check(container.Transient(func() services.IProjectService { return servicesImpl.CreateProjectService() }),
+		"error while creating container bindings [Services - Project]")
+	utils.Check(container.Transient(func() services.IWorkExperienceService { return servicesImpl.CreateWorkExperienceService() }),
 		"error while creating container bindings [Services - Project]")
 }
 
@@ -92,6 +95,8 @@ func bindControllers() {
 		"error while creating container bindings [Controllers - ProjectCategory]")
 	utils.Check(container.Transient(func() controllers.IProjectController {
 		return controllersImpl.CreateProjectController()
-	}),
-		"error while creating container bindings [Controllers - Project]")
+	}), "error while creating container bindings [Controllers - Project]")
+	utils.Check(container.Transient(func() controllers.IWorkExperienceController {
+		return controllersImpl.CreateWorkExperienceController()
+	}), "error while creating container bindings [Controllers - Project]")
 }

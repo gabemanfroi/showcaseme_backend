@@ -14,6 +14,15 @@ import (
 type PostgresSession struct{}
 
 func CreateSqlInstance() *gorm.DB {
+	dbUrl := GetDbUrl()
+
+	db, err := gorm.Open(postgres.Open(dbUrl))
+	utils.Check(err, "Error creating database connection ")
+
+	return db
+}
+
+func GetDbUrl() string {
 	dbUrl := fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
 		core.AppConfig.DbHost,
@@ -21,11 +30,7 @@ func CreateSqlInstance() *gorm.DB {
 		core.AppConfig.DbUser,
 		core.AppConfig.DbName,
 		core.AppConfig.DbPassword)
-
-	db, err := gorm.Open(postgres.Open(dbUrl))
-	utils.Check(err, "Error creating database connection ")
-
-	return db
+	return dbUrl
 }
 
 func GetSqlInstance() *gorm.DB {
@@ -51,5 +56,6 @@ func Migrate() {
 	utils.Check(db.AutoMigrate(&models.Article{}), "failed to migrate users")
 	utils.Check(db.AutoMigrate(&models.ProjectCategory{}), "failed to migrate project_categories")
 	utils.Check(db.AutoMigrate(&models.Project{}), "failed to migrate projects")
+	utils.Check(db.AutoMigrate(&models.WorkExperience{}), "failed to migrate work_experiences")
 	log.Printf("Database Migrations Completed...")
 }

@@ -14,13 +14,13 @@ func RegisterProjectCategoryRoutes(router fiber.Router) {
 
 	utils.Check(container.Resolve(&controller), "Failed to create projectCategoryController instance...")
 
-	router.Post("/project_categorys", func(c *fiber.Ctx) error {
+	router.Post("/project_categories", func(c *fiber.Ctx) error {
 		return schema_validation_middleware.ValidateSchema(c, project_category.CreateProjectCategoryValidator{})
 	}, controller.Create)
-	router.Get("/project_categorys", controller.GetAll)
-	router.Get("/project_categorys/:id", controller.GetById)
-	router.Delete("/project_categorys/:id", controller.Delete)
-	router.Patch("/project_categorys/:id", func(c *fiber.Ctx) error {
+	router.Get("/project_categories", controller.GetAll)
+	router.Get("/project_categories/:id", controller.GetById)
+	router.Delete("/project_categories/:id", controller.Delete)
+	router.Patch("/project_categories/:id", func(c *fiber.Ctx) error {
 		return schema_validation_middleware.ValidateSchema(c, project_category.UpdateProjectCategoryValidator{})
 	}, controller.Update)
 }

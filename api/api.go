@@ -28,9 +28,9 @@ func init() {
 func StartServer() {
 
 	app := fiber.New()
+	app.Use(cors.New(cors.Config{AllowOrigins: "http://localhost:3000", AllowMethods: "*", AllowHeaders: "*", AllowCredentials: true}))
 
 	application.RegisterRoutes(app)
-	app.Use(cors.New(cors.Config{AllowOrigins: "http://localhost:3000"}))
 	log.Println(fmt.Sprintf("Starting Server on port %s", core.AppConfig.AppPort))
 	log.Fatal(app.Listen(fmt.Sprintf(":%v", core.AppConfig.AppPort)))
 

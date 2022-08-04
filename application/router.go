@@ -15,4 +15,5 @@ func RegisterRoutes(router fiber.Router) {
 	routes.RegisterArticleRoutes(router)
 	routes.RegisterProjectCategoryRoutes(router)
 	routes.RegisterProjectRoutes(router)
+	routes.RegisterWorkExperienceRoutes(router)
 }

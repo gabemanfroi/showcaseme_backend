@@ -4,6 +4,7 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"showcaseme/domain/DTO/project"
+	"showcaseme/domain/DTO/project_category"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
 )
@@ -29,20 +30,21 @@ func (repository ProjectRepository) Create(dto *project.CreateProjectDTO) (*proj
 		return nil, errors.New("an error has occured when creating your project, verify")
 	}
 
-	createdproject, _ := repository.GetById(p.ID)
+	createdProject, _ := repository.GetById(p.ID)
 
-	return createdproject, nil
+	return createdProject, nil
 }
 
 func (repository ProjectRepository) GetAll() ([]*project.ReadProjectDTO, error) {
 	var projects []*models.Project
 	var projectDTOs []*project.ReadProjectDTO
 
-	repository.sqlClient.Find(&projects)
+	repository.sqlClient.Joins("ProjectCategory").Find(&projects)
 
 	for _, p := range projects {
 		projectDTOs = append(projectDTOs, &project.ReadProjectDTO{
-			ProjectCategory: p.ProjectCategory,
+			ID:              p.ID,
+			ProjectCategory: &project_category.ReadProjectCategoryDTO{ID: p.ProjectCategoryId, Name: p.ProjectCategory.Name},
 			ImageUrl:        p.ImageUrl,
 			Url:             p.Url,
 			Title:           p.Title,
@@ -55,14 +57,15 @@ func (repository ProjectRepository) GetAll() ([]*project.ReadProjectDTO, error) 
 func (repository ProjectRepository) GetById(id uint) (*project.ReadProjectDTO, error) {
 	var p *models.Project
 
-	repository.sqlClient.Find(&p, id)
+	repository.sqlClient.Joins("ProjectCategory").Find(&p, id)
 
 	if p.ID == 0 {
 		return nil, errors.New("project not found")
 	}
 
 	return &project.ReadProjectDTO{
-		ProjectCategory: p.ProjectCategory,
+		ID:              p.ID,
+		ProjectCategory: &project_category.ReadProjectCategoryDTO{ID: p.ProjectCategoryId, Name: p.ProjectCategory.Name},
 		ImageUrl:        p.ImageUrl,
 		Url:             p.Url,
 		Title:           p.Title,

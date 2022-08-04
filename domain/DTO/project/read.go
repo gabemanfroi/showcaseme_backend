@@ -1,11 +1,13 @@
 package project
 
-import "showcaseme/domain/models"
+import (
+	"showcaseme/domain/DTO/project_category"
+)
 
 type ReadProjectDTO struct {
-	ID              uint                   `json:"id"`
-	ProjectCategory models.ProjectCategory `json:"projectCategory"`
-	ImageUrl        string                 `json:"imageUrl"`
-	Url             string                 `json:"url"`
-	Title           string                 `json:"title"`
+	ID              uint                                     `json:"id"`
+	ProjectCategory *project_category.ReadProjectCategoryDTO `json:"projectCategory"`
+	ImageUrl        string                                   `json:"imageUrl"`
+	Url             string                                   `json:"url"`
+	Title           string                                   `json:"title"`
 }
