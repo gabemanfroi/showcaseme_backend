@@ -6,6 +6,7 @@ import (
 	"showcaseme/domain/DTO/user_website"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type UserWebsiteRepository struct {
@@ -18,9 +19,9 @@ func CreateUserWebsiteRepository() *UserWebsiteRepository {
 
 func (repository UserWebsiteRepository) Create(dto *user_website.CreateUserWebsiteDTO) (*user_website.ReadUserWebsiteDTO, error) {
 	u := models.UserWebsite{
-        Url: dto.Url,
-        UserId: dto.UserId,
-        Type: dto.Type,
+		Url:    dto.Url,
+		UserId: dto.UserId,
+		Type:   dto.Type,
 	}
 	repository.sqlClient.Create(&u)
 
@@ -41,9 +42,9 @@ func (repository UserWebsiteRepository) GetAll() ([]*user_website.ReadUserWebsit
 
 	for _, u := range userWebsites {
 		userWebsiteDTOs = append(userWebsiteDTOs, &user_website.ReadUserWebsiteDTO{
-                ID: u.ID,
-                Url: u.Url,
-                Type: u.Type,
+			ID:   u.ID,
+			Url:  u.Url,
+			Type: u.Type,
 		})
 	}
 
@@ -60,9 +61,9 @@ func (repository UserWebsiteRepository) GetById(id uint) (*user_website.ReadUser
 	}
 
 	return &user_website.ReadUserWebsiteDTO{
-        ID: u.ID,
-        Url: u.Url,
-        Type: u.Type,
+		ID:   u.ID,
+		Url:  u.Url,
+		Type: u.Type,
 	}, nil
 }
 
@@ -78,28 +79,17 @@ func (repository UserWebsiteRepository) Delete(id uint) error {
 
 func (repository UserWebsiteRepository) Update(id uint, dto *user_website.UpdateUserWebsiteDTO) (*user_website.ReadUserWebsiteDTO, error) {
 	var u models.UserWebsite
-	
+
 	repository.sqlClient.Find(&u, id)
 
 	if u.ID == 0 {
 		return nil, errors.New("user_website not found")
 	}
 
-	updateUserWebsiteValuesFromDTO(&u, dto)
+	utils.UpdateModelValuesFromDTO(&u, dto)
 	repository.sqlClient.Save(&u)
 
 	updatedUserWebsite, _ := repository.GetById(u.ID)
 
 	return updatedUserWebsite, nil
 }
-
-func updateUserWebsiteValuesFromDTO(model *models.UserWebsite, dto *user_website.UpdateUserWebsiteDTO) {
-    if dto.Url != nil{
-        model.Url = *dto.Url
-    }
-    if dto.Type != nil{
-        model.Type = *dto.Type
-    }
-}
-
-

@@ -6,6 +6,7 @@ import (
 	"showcaseme/domain/DTO/carousel_item"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type CarouselItemRepository struct {
@@ -85,20 +86,11 @@ func (repository CarouselItemRepository) Update(id uint, dto *carousel_item.Upda
 		return nil, errors.New("carousel_item not found")
 	}
 
-	updateCarouselItemValuesFromDTO(&c, dto)
+	utils.UpdateModelValuesFromDTO(&c, dto)
 	repository.sqlClient.Save(&c)
 
 	return &carousel_item.ReadCarouselItemDTO{
 		ID:      c.ID,
 		Content: c.Content,
 	}, nil
-}
-
-func updateCarouselItemValuesFromDTO(model *models.CarouselItem, dto *carousel_item.UpdateCarouselItemDTO) {
-	if dto.Content != nil {
-		model.Content = *dto.Content
-	}
-	if dto.Position != nil {
-		model.Position = *dto.Position
-	}
 }

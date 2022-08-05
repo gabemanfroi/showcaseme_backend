@@ -6,6 +6,7 @@ import (
 	"showcaseme/domain/DTO/user"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type UserRepository struct {
@@ -110,7 +111,7 @@ func (repository UserRepository) Update(id uint, dto *user.UpdateUserDTO) (*user
 	if u.ID == 0 {
 		return nil, errors.New("user not found")
 	}
-	updateUserValuesFromDTO(&u, dto)
+	utils.UpdateModelValuesFromDTO(&u, dto)
 	repository.sqlClient.Save(&u)
 
 	return &user.ReadUserDTO{
@@ -120,31 +121,4 @@ func (repository UserRepository) Update(id uint, dto *user.UpdateUserDTO) (*user
 		Username:  u.Username,
 		LastName:  u.LastName,
 	}, nil
-}
-
-func updateUserValuesFromDTO(model *models.User, dto *user.UpdateUserDTO) {
-	if dto.Age != nil {
-		model.Age = *dto.Age
-	}
-	if dto.City != nil {
-		model.City = *dto.City
-	}
-	if dto.Country != nil {
-		model.Country = *dto.Country
-	}
-	if dto.Email != nil {
-		model.Email = *dto.Email
-	}
-	if dto.FirstName != nil {
-		model.FirstName = *dto.FirstName
-	}
-	if dto.LastName != nil {
-		model.LastName = *dto.LastName
-	}
-	if dto.Pronouns != nil {
-		model.Pronouns = *dto.Pronouns
-	}
-	if dto.Role != nil {
-		model.Role = *dto.Role
-	}
 }

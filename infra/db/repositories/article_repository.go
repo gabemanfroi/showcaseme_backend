@@ -6,6 +6,7 @@ import (
 	"showcaseme/domain/DTO/article"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type ArticleRepository struct {
@@ -85,19 +86,10 @@ func (repository ArticleRepository) Update(id uint, dto *article.UpdateArticleDT
 		return nil, errors.New("article not found")
 	}
 
-	updateArticleValuesFromDTO(&a, dto)
+	utils.UpdateModelValuesFromDTO(&a, dto)
 	repository.sqlClient.Save(&a)
 
 	updatedArticle, _ := repository.GetById(a.ID)
 
 	return updatedArticle, nil
-}
-
-func updateArticleValuesFromDTO(model *models.Article, dto *article.UpdateArticleDTO) {
-	if dto.Title != nil {
-		model.Title = *dto.Title
-	}
-	if dto.Content != nil {
-		model.Content = *dto.Content
-	}
 }

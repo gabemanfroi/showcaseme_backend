@@ -6,6 +6,7 @@ import (
 	"showcaseme/domain/DTO/work_experience"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type WorkExperienceRepository struct {
@@ -92,28 +93,10 @@ func (repository WorkExperienceRepository) Update(id uint, dto *work_experience.
 		return nil, errors.New("work_experience not found")
 	}
 
-	updateWorkExperienceValuesFromDTO(&w, dto)
+	utils.UpdateModelValuesFromDTO(&w, dto)
 	repository.sqlClient.Save(&w)
 
 	updatedWorkExperience, _ := repository.GetById(w.ID)
 
 	return updatedWorkExperience, nil
-}
-
-func updateWorkExperienceValuesFromDTO(model *models.WorkExperience, dto *work_experience.UpdateWorkExperienceDTO) {
-	if dto.Role != nil {
-		model.Role = *dto.Role
-	}
-	if dto.CompanyName != nil {
-		model.CompanyName = *dto.CompanyName
-	}
-	if dto.EndDate != nil {
-		model.EndDate = dto.EndDate
-	}
-	if dto.Description != nil {
-		model.Description = *dto.Description
-	}
-	if dto.StartDate != nil {
-		model.StartDate = *dto.StartDate
-	}
 }

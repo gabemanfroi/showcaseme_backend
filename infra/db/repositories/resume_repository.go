@@ -13,6 +13,7 @@ import (
 	"showcaseme/domain/DTO/user_website"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type ResumeRepository struct {
@@ -126,4 +127,14 @@ func (repository ResumeRepository) getUserSkills(u *models.User) []*skill.ReadSk
 		})
 	}
 	return skillDTOs
+}
+
+func (repository ResumeRepository) Update(username string, dto resume.UpdateResumeDTO) (*resume.ReadResumeDTO, error) {
+	var u *models.User
+
+	repository.sqlClient.Where(&models.User{Username: username}).First(&u)
+	utils.UpdateModelValuesFromDTO(u, dto.User)
+
+	repository.sqlClient.Save(&u)
+	return repository.GetByUsername(username)
 }

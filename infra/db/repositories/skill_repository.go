@@ -7,6 +7,7 @@ import (
 	"showcaseme/domain/DTO/skill_category"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type SkillRepository struct {
@@ -94,22 +95,10 @@ func (repository SkillRepository) Update(id uint, dto *skill.UpdateSkillDTO) (*s
 		return nil, errors.New("skill not found")
 	}
 
-	updateSkillValuesFromDTO(&s, dto)
+	utils.UpdateModelValuesFromDTO(&s, dto)
 	repository.sqlClient.Save(&s)
 
 	updatedSkill, _ := repository.GetById(s.ID)
 
 	return updatedSkill, nil
-}
-
-func updateSkillValuesFromDTO(model *models.Skill, dto *skill.UpdateSkillDTO) {
-	if dto.Name != nil {
-		model.Name = *dto.Name
-	}
-	if dto.Proficiency != nil {
-		model.Proficiency = *dto.Proficiency
-	}
-	if dto.SkillCategoryId != nil {
-		model.SkillCategoryId = *dto.SkillCategoryId
-	}
 }

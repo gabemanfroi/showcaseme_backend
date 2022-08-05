@@ -6,6 +6,7 @@ import (
 	"showcaseme/domain/DTO/project_category"
 	"showcaseme/domain/models"
 	"showcaseme/infra/db"
+	"showcaseme/internal/utils"
 )
 
 type ProjectCategoryRepository struct {
@@ -84,16 +85,10 @@ func (repository ProjectCategoryRepository) Update(id uint, dto *project_categor
 		return nil, errors.New("project_category not found")
 	}
 
-	updateProjectCategoryValuesFromDTO(&p, dto)
+	utils.UpdateModelValuesFromDTO(&p, dto)
 	repository.sqlClient.Save(&p)
 
 	updatedProjectCategory, _ := repository.GetById(p.ID)
 
 	return updatedProjectCategory, nil
-}
-
-func updateProjectCategoryValuesFromDTO(model *models.ProjectCategory, dto *project_category.UpdateProjectCategoryDTO) {
-	if dto.Name != nil {
-		model.Name = *dto.Name
-	}
 }
