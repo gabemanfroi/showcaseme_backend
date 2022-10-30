@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/golobby/container/v3"
+	"mime/multipart"
 	"showcaseme/domain/DTO/user"
 	"showcaseme/domain/interfaces/repositories"
 	"showcaseme/internal/utils"
@@ -37,4 +38,8 @@ func getUserRepository() repositories.IUserRepository {
 	var injector repositories.IUserRepository
 	utils.Check(container.Resolve(&injector), "Error while retrieving UserRepository instance")
 	return injector
+}
+
+func (u UserService) UploadProfilePicture(username string, profilePicture *multipart.FileHeader) (string, error) {
+	return u.repository.UploadProfilePicture(username, profilePicture)
 }

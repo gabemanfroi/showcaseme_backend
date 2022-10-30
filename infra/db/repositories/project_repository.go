@@ -2,28 +2,56 @@ package repositories
 
 import (
 	"errors"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"gorm.io/gorm"
 	"showcaseme/domain/DTO/project"
 	"showcaseme/domain/DTO/project_category"
 	"showcaseme/domain/models"
+	"showcaseme/infra"
+	"showcaseme/infra/core"
 	"showcaseme/infra/db"
 	"showcaseme/internal/utils"
 )
 
 type ProjectRepository struct {
-	sqlClient *gorm.DB
+	sqlClient  *gorm.DB
+	awsSession *session.Session
 }
 
 func CreateProjectRepository() *ProjectRepository {
-	return &ProjectRepository{sqlClient: db.GetSqlInstance()}
+	return &ProjectRepository{sqlClient: db.GetSqlInstance(),
+		awsSession: infra.CreateAwsSession()}
 }
 
 func (repository ProjectRepository) Create(dto *project.CreateProjectDTO) (*project.ReadProjectDTO, error) {
+
+	file, err := dto.BackgroundImage.Open()
+
+	fileType := dto.BackgroundImage.Header["Content-Type"][0]
+
+	uploader := s3manager.NewUploader(repository.awsSession)
+
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket:      aws.String(core.AppConfig.AwsBucketName),
+		Key:         aws.String(dto.BackgroundImage.Filename),
+		Body:        file,
+		ContentType: aws.String(fileType),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	filepath := "https://" + core.AppConfig.AwsBucketName + "." + "s3-" + core.AppConfig.AwsRegion + ".amazonaws.com/" + dto.BackgroundImage.Filename
+
 	p := models.Project{
 		UserId:            dto.UserId,
 		ProjectCategoryId: dto.ProjectCategoryId,
 		Title:             dto.Title,
 		Url:               dto.Url,
+		ImageUrl:          filepath,
 	}
 	repository.sqlClient.Create(&p)
 

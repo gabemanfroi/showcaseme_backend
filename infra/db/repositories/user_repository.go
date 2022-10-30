@@ -2,19 +2,29 @@ package repositories
 
 import (
 	"errors"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"gorm.io/gorm"
+	"mime/multipart"
 	"showcaseme/domain/DTO/user"
 	"showcaseme/domain/models"
+	"showcaseme/infra"
+	"showcaseme/infra/core"
 	"showcaseme/infra/db"
 	"showcaseme/internal/utils"
 )
 
 type UserRepository struct {
-	sqlClient *gorm.DB
+	sqlClient  *gorm.DB
+	awsSession *session.Session
 }
 
 func CreateUserRepository() *UserRepository {
-	return &UserRepository{sqlClient: db.GetSqlInstance()}
+	return &UserRepository{
+		sqlClient:  db.GetSqlInstance(),
+		awsSession: infra.CreateAwsSession(),
+	}
 }
 
 func (repository UserRepository) Create(dto *user.CreateUserDTO) (*user.ReadUserDTO, error) {
@@ -53,12 +63,13 @@ func (repository UserRepository) GetAll() ([]*user.ReadUserDTO, error) {
 
 	for _, u := range users {
 		userDTOs = append(userDTOs, &user.ReadUserDTO{
-			ID:        u.ID,
-			Username:  u.Username,
-			FirstName: u.FirstName,
-			LastName:  u.LastName,
-			Email:     u.Email,
-			Role:      u.Role,
+			ID:                u.ID,
+			Username:          u.Username,
+			FirstName:         u.FirstName,
+			LastName:          u.LastName,
+			Email:             u.Email,
+			Role:              u.Role,
+			ProfilePictureUrl: u.ProfilePictureURL,
 		})
 	}
 
@@ -74,12 +85,13 @@ func (repository UserRepository) GetById(id uint) (*user.ReadUserDTO, error) {
 		return nil, errors.New("user not found")
 	}
 	return &user.ReadUserDTO{
-		ID:        u.ID,
-		Username:  u.Username,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Email:     u.Email,
-		Role:      u.Role,
+		ID:                u.ID,
+		Username:          u.Username,
+		FirstName:         u.FirstName,
+		LastName:          u.LastName,
+		Email:             u.Email,
+		Role:              u.Role,
+		ProfilePictureUrl: u.ProfilePictureURL,
 	}, nil
 }
 
@@ -121,4 +133,30 @@ func (repository UserRepository) Update(id uint, dto *user.UpdateUserDTO) (*user
 		Username:  u.Username,
 		LastName:  u.LastName,
 	}, nil
+}
+
+func (repository UserRepository) UploadProfilePicture(username string, profilePicture *multipart.FileHeader) (string, error) {
+	var u *models.User
+	file, err := profilePicture.Open()
+
+	fileType := profilePicture.Header["Content-Type"][0]
+
+	uploader := s3manager.NewUploader(repository.awsSession)
+
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket:      aws.String(core.AppConfig.AwsBucketName),
+		Key:         aws.String(profilePicture.Filename),
+		Body:        file,
+		ContentType: aws.String(fileType),
+	})
+	if err != nil {
+		return "", err
+	}
+
+	filepath := "https://" + core.AppConfig.AwsBucketName + "." + "s3-" + core.AppConfig.AwsRegion + ".amazonaws.com/" + profilePicture.Filename
+	repository.sqlClient.Where(&models.User{Username: username}).First(&u)
+	u.ProfilePictureURL = filepath
+	repository.sqlClient.Save(&u)
+
+	return filepath, nil
 }

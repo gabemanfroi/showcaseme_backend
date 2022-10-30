@@ -12,4 +12,5 @@ func RegisterResumeRoutes(router fiber.Router) {
 
 	utils.Check(container.Resolve(&controller), "Failed to create resumeController instance")
 	router.Get("/resumes/:username", controller.GetByUsername)
+	router.Patch("/resumes/:username", controller.Update)
 }

@@ -14,9 +14,7 @@ func RegisterProjectRoutes(router fiber.Router) {
 
 	utils.Check(container.Resolve(&controller), "Failed to create projectController instance...")
 
-	router.Post("/projects", func(c *fiber.Ctx) error {
-		return schema_validation_middleware.ValidateSchema(c, project.CreateProjectValidator{})
-	}, controller.Create)
+	router.Post("/projects", controller.Create)
 	router.Get("/projects", controller.GetAll)
 	router.Get("/projects/:id", controller.GetById)
 	router.Delete("/projects/:id", controller.Delete)

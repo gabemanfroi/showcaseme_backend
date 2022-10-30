@@ -19,7 +19,6 @@ func UpdateModelValuesFromDTO(model interface{}, dto interface{}) {
 					modelField.Set(fieldValue)
 				}
 			}
-
 		}
 	}
 }

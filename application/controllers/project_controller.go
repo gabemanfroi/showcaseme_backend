@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golobby/container/v3"
 	"showcaseme/domain/DTO/project"
@@ -25,10 +26,18 @@ func getProjectService() services.IProjectService {
 }
 
 func (controller ProjectController) Create(c *fiber.Ctx) error {
+	backgroundImage, err := c.FormFile("backgroundImage")
+	if err != nil {
+		return c.Status(400).JSON(err)
+	}
+
 	var dto project.CreateProjectDTO
 	if err := c.BodyParser(&dto); err != nil {
 		return err
 	}
+	dto.BackgroundImage = backgroundImage
+
+	fmt.Println(dto)
 
 	createdProject, err := controller.service.Create(&dto)
 

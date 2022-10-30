@@ -23,4 +23,5 @@ func RegisterUserRoutes(router fiber.Router) {
 	router.Patch("/users/:id", func(c *fiber.Ctx) error {
 		return schema_validation_middleware.ValidateSchema(c, user.UpdateUserValidator{})
 	}, controller.Update)
+	router.Post("/users/upload/profilePicture", controller.UploadProfilePicture)
 }

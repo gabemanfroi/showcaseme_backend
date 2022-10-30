@@ -1,6 +1,7 @@
 package IoC
 
 import (
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/golobby/container/v3"
 	"gorm.io/gorm"
 	controllersImpl "showcaseme/application/controllers"
@@ -8,6 +9,7 @@ import (
 	"showcaseme/domain/interfaces/repositories"
 	"showcaseme/domain/interfaces/services"
 	servicesImpl "showcaseme/domain/services"
+	"showcaseme/infra"
 	"showcaseme/infra/db"
 	repositoriesImpl "showcaseme/infra/db/repositories"
 	"showcaseme/internal/utils"
@@ -21,8 +23,10 @@ func InitContainer() {
 }
 
 func bindCore() {
-	err := container.Singleton(func() *gorm.DB { return db.CreateSqlInstance() })
-	utils.Check(err, "error while creating container bindings [database]")
+	utils.Check(container.Singleton(func() *gorm.DB { return db.CreateSqlInstance() }),
+		"error while creating container bindings [Core - SqlInstance]")
+	utils.Check(container.Singleton(func() *session.Session { return infra.CreateAwsSession() }),
+		"error while creating container bindings [Core - AwsSession]")
 }
 
 func bindRepositories() {
@@ -49,6 +53,9 @@ func bindRepositories() {
 	utils.Check(container.Transient(func() repositories.IWorkExperienceRepository {
 		return repositoriesImpl.CreateWorkExperienceRepository()
 	}), "error while creating container bindings [Repositories - Project]")
+	utils.Check(container.Transient(func() repositories.IAuthRepository {
+		return repositoriesImpl.CreateAuthRepository()
+	}), "error while creating container bindings [Repositories - Auth]")
 }
 
 func bindServices() {
@@ -72,6 +79,11 @@ func bindServices() {
 		"error while creating container bindings [Services - Project]")
 	utils.Check(container.Transient(func() services.IWorkExperienceService { return servicesImpl.CreateWorkExperienceService() }),
 		"error while creating container bindings [Services - Project]")
+	utils.Check(container.Transient(func() services.IAwsService { return servicesImpl.CreateAwsService() }),
+		"error while creating container bindings [Services - AWS]")
+	utils.Check(container.Transient(func() services.IAuthService {
+		return servicesImpl.CreateAuthService()
+	}), "error while creating container bindings [Repositories - Auth]")
 }
 
 func bindControllers() {
@@ -98,5 +110,8 @@ func bindControllers() {
 	}), "error while creating container bindings [Controllers - Project]")
 	utils.Check(container.Transient(func() controllers.IWorkExperienceController {
 		return controllersImpl.CreateWorkExperienceController()
-	}), "error while creating container bindings [Controllers - Project]")
+	}), "error while creating container bindings [Controllers - WorkExperience]")
+	utils.Check(container.Transient(func() controllers.IAuthController {
+		return controllersImpl.CreateAuthController()
+	}), "error while creating container bindings [Controllers - Auth]")
 }

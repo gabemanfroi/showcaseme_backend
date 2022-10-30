@@ -82,6 +82,19 @@ func (controller UserController) Update(c *fiber.Ctx) error {
 	return c.Status(200).JSON(updatedUser)
 }
 
+func (controller UserController) UploadProfilePicture(c *fiber.Ctx) error {
+	username := c.FormValue("username")
+	profilePicture, err := c.FormFile("profilePicture")
+	if err != nil {
+		return c.Status(400).JSON(err)
+	}
+	response, err := controller.service.UploadProfilePicture(username, profilePicture)
+	if err != nil {
+		return c.Status(400).JSON(err)
+	}
+	return c.Status(200).JSON(response)
+}
+
 func getUserService() services.IUserService {
 	var injector services.IUserService
 	utils.Check(container.Resolve(&injector), "Error while retrieving UserService instance ")

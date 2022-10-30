@@ -22,3 +22,7 @@ func getResumeRepository() repositories.IResumeRepository {
 func (service ResumeService) GetByUsername(username string) (*resume.ReadResumeDTO, error) {
 	return service.repository.GetByUsername(username)
 }
+
+func (service ResumeService) Update(username string, dto *resume.UpdateResumeDTO) (*resume.ReadResumeDTO, error) {
+	return service.repository.Update(username, dto)
+}

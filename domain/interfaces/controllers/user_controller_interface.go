@@ -10,4 +10,5 @@ type IUserController interface {
 	GetById(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	Update(c *fiber.Ctx) error
+	UploadProfilePicture(c *fiber.Ctx) error
 }
